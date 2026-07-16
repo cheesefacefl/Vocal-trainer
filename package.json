@@ -1,0 +1,15 @@
+{
+  "name": "vocal-trainer-coach",
+  "version": "0.1.0",
+  "description": "An AI vocal coach that listens to you sing — real-time pitch detection in the browser plus a Claude-powered coaching agent.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0"
+  }
+}

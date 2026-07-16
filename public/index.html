@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aria — Your Vocal Coach</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🎤 Aria</h1>
+      <p class="tagline">Your AI vocal coach — sing, and she'll listen.</p>
+    </header>
+
+    <main>
+      <!-- Live tuner -->
+      <section class="panel tuner-panel">
+        <div class="note-display">
+          <div id="note" class="note">—</div>
+          <div id="freq" class="freq">Press start and sing a note</div>
+        </div>
+
+        <div class="needle-track">
+          <div class="needle-center"></div>
+          <div id="needle" class="needle"></div>
+        </div>
+        <div class="needle-labels">
+          <span>flat</span><span>in tune</span><span>sharp</span>
+        </div>
+
+        <div id="cents" class="cents"></div>
+
+        <div class="controls">
+          <button id="micBtn" class="primary">Start listening</button>
+        </div>
+      </section>
+
+      <!-- Pitch-match exercise -->
+      <section class="panel exercise-panel">
+        <h2>Match the note</h2>
+        <p class="hint">
+          Aria plays a note — sing it back and hold it. She'll tell you how you did.
+        </p>
+        <div class="exercise-controls">
+          <button id="exerciseBtn" disabled>Play a note to match</button>
+          <span id="exerciseStatus" class="status"></span>
+        </div>
+      </section>
+
+      <!-- Coach chat -->
+      <section class="panel coach-panel">
+        <h2>Talk to Aria</h2>
+        <div id="chat" class="chat">
+          <div class="msg coach">
+            Hi! I'm Aria. Press <strong>Start listening</strong>, then try the
+            "Match the note" exercise or just ask me anything about singing.
+          </div>
+        </div>
+        <form id="chatForm" class="chat-form">
+          <input
+            id="chatInput"
+            type="text"
+            placeholder="Ask about breathing, warmups, range…"
+            autocomplete="off"
+          />
+          <button type="submit" class="primary">Send</button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

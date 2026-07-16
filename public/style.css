@@ -1,0 +1,250 @@
+:root {
+  --bg: #0f1225;
+  --panel: #1a1f3a;
+  --panel-2: #232a4d;
+  --text: #e8eaf6;
+  --muted: #9aa0c7;
+  --accent: #6c7bff;
+  --accent-2: #4ad9c4;
+  --sharp: #ff6b6b;
+  --flat: #ffb84d;
+  --in-tune: #4ad991;
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at 50% 0%, #1c2145, var(--bg));
+  color: var(--text);
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.4rem;
+}
+
+.tagline {
+  color: var(--muted);
+  margin: 0.4rem 0 0;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.panel {
+  background: var(--panel);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+/* Tuner */
+.note-display {
+  text-align: center;
+}
+
+.note {
+  font-size: 4.5rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.1s;
+}
+
+.freq {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.needle-track {
+  position: relative;
+  height: 60px;
+  margin: 1.5rem 0 0.4rem;
+  background: linear-gradient(
+    90deg,
+    var(--flat) 0%,
+    #2a305a 40%,
+    var(--in-tune) 50%,
+    #2a305a 60%,
+    var(--sharp) 100%
+  );
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.needle-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translateX(-50%);
+}
+
+.needle {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  bottom: 6px;
+  width: 6px;
+  background: #fff;
+  border-radius: 3px;
+  transform: translateX(-50%);
+  transition: left 0.08s ease-out;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+}
+
+.needle-labels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.cents {
+  text-align: center;
+  height: 1.4rem;
+  margin-top: 0.6rem;
+  font-weight: 600;
+}
+
+.controls {
+  text-align: center;
+  margin-top: 1.2rem;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1.4rem;
+  background: var(--panel-2);
+  color: var(--text);
+  transition: transform 0.05s, background 0.15s, opacity 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: #2c345e;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--accent);
+}
+
+button.primary:hover:not(:disabled) {
+  background: #7e8bff;
+}
+
+button.listening {
+  background: var(--sharp);
+}
+
+/* Exercise */
+.hint,
+.status {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.exercise-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+
+/* Chat */
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.msg {
+  padding: 0.7rem 1rem;
+  border-radius: 14px;
+  line-height: 1.45;
+  max-width: 85%;
+  white-space: pre-wrap;
+}
+
+.msg.coach {
+  background: var(--panel-2);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.msg.user {
+  background: var(--accent);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.msg.system {
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-style: italic;
+  align-self: center;
+  text-align: center;
+  max-width: 100%;
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.chat-form input {
+  flex: 1;
+  font: inherit;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #2c345e;
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.chat-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
