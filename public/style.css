@@ -26,7 +26,8 @@ body {
 
 header {
   text-align: center;
-  padding: 2rem 1rem 1rem;
+  /* Clear the iPhone status bar / notch when running fullscreen. */
+  padding: calc(2rem + env(safe-area-inset-top)) 1rem 1rem;
 }
 
 header h1 {
@@ -42,7 +43,7 @@ header h1 {
 main {
   max-width: 640px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 1.2rem;

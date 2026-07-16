@@ -1,5 +1,12 @@
 import { PitchTracker, midiToFreq, midiToNoteName } from "./pitch.js";
 
+// Register the service worker so Aria installs and loads like a native app.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
+
 const tracker = new PitchTracker();
 
 // DOM
