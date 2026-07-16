@@ -54,6 +54,24 @@ access, and sing!
 > Use headphones for the pitch-matching exercise so the reference tone doesn't
 > leak into your mic.
 
+## Deploy it (use it from your phone — no computer needed)
+
+You can host Aria for free on [Render](https://render.com) straight from your
+phone's browser, then open her at a web link:
+
+1. Go to **render.com** and sign up (use "Sign in with GitHub").
+2. Tap **New → Blueprint**.
+3. Pick the **Vocal-trainer** repository. Render reads `render.yaml` automatically.
+4. When prompted, paste your **`ANTHROPIC_API_KEY`** (from
+   [console.anthropic.com](https://console.anthropic.com/settings/keys)). It's
+   stored securely on Render — never in the repo.
+5. Tap **Apply** and wait a couple of minutes for the first build.
+6. Open the `https://…onrender.com` URL Render gives you in **Safari**, tap
+   **Start listening**, and allow the microphone. 🎤
+
+> The free tier goes to sleep after a while of no use, so the first visit after
+> a break can take ~30–60 seconds to wake up. After that it's snappy.
+
 ## Project layout
 
 | File | What it does |

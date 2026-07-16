@@ -1,0 +1,13 @@
+# Render Blueprint — deploys Aria as a free web service.
+# On render.com: New → Blueprint → pick this repo. Render reads this file,
+# then prompts you to paste your ANTHROPIC_API_KEY (it is never stored in the repo).
+services:
+  - type: web
+    name: vocal-trainer
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false # Render asks you for this at deploy time — keeps it out of the repo
