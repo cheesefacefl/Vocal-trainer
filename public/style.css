@@ -189,6 +189,16 @@ button.listening {
   margin-top: 0.8rem;
 }
 
+/* Aria's eyes */
+.cam {
+  width: 100%;
+  border-radius: 12px;
+  margin: 0.8rem 0 0.2rem;
+  /* Mirror the selfie view so it feels natural. */
+  transform: scaleX(-1);
+  background: #000;
+}
+
 /* Chat */
 .chat {
   display: flex;
@@ -248,4 +258,34 @@ button.listening {
 .chat-form input:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+.voice-btn {
+  padding: 0.7rem 0.9rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.voice-btn.recording {
+  background: var(--sharp);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 107, 107, 0); }
+}
+
+.speak-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.speak-toggle input {
+  accent-color: var(--accent);
 }
