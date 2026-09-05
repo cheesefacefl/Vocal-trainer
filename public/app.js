@@ -20,12 +20,45 @@ const exerciseStatus = document.getElementById("exerciseStatus");
 const chatEl = document.getElementById("chat");
 const chatForm = document.getElementById("chatForm");
 const chatInput = document.getElementById("chatInput");
+const camBtn = document.getElementById("camBtn");
+const lookBtn = document.getElementById("lookBtn");
+const camVideo = document.getElementById("camVideo");
+const voiceBtn = document.getElementById("voiceBtn");
+const speakToggle = document.getElementById("speakToggle");
 
 let listening = false;
 let rafId = null;
 
-// Conversation history sent to the coach each turn.
+// Conversation history sent to the coach each turn (text only — snapshots are
+// attached to the current turn, not stored).
 const history = [];
+
+// --- Aria's ears: rolling memory of what the mic heard -----------------------
+
+// Voiced pitch readings from the last ~10 seconds, so Aria "hears" what you
+// were just singing even when you didn't run a formal exercise.
+const recentReadings = [];
+const HEARING_WINDOW_MS = 10_000;
+
+function rememberReading(reading) {
+  const now = performance.now();
+  recentReadings.push({ t: now, note: reading.note, freq: reading.freq });
+  while (recentReadings.length && now - recentReadings[0].t > HEARING_WINDOW_MS) {
+    recentReadings.shift();
+  }
+}
+
+function hearingSummary() {
+  if (!listening || recentReadings.length < 5) return null;
+  const notes = [...new Set(recentReadings.map((r) => r.note))];
+  const freqs = recentReadings.map((r) => r.freq);
+  const min = Math.min(...freqs).toFixed(0);
+  const max = Math.max(...freqs).toFixed(0);
+  return (
+    `In the last ~10 seconds the mic heard the singer voicing these notes: ` +
+    `${notes.join(", ")} (range ${min}–${max} Hz, ${recentReadings.length} voiced frames).`
+  );
+}
 
 // --- Live tuner loop ---------------------------------------------------------
 
@@ -51,6 +84,8 @@ function tick() {
       centsEl.style.color = cents > 0 ? "var(--sharp)" : "var(--flat)";
     }
 
+    rememberReading(reading);
+
     // Feed the current exercise, if one is running.
     if (activeExercise) activeExercise.sample(reading);
   }
@@ -69,6 +104,7 @@ async function toggleMic() {
     freqEl.textContent = "Stopped";
     centsEl.textContent = "";
     needleEl.style.left = "50%";
+    recentReadings.length = 0;
     return;
   }
 
@@ -87,6 +123,133 @@ async function toggleMic() {
 }
 
 micBtn.addEventListener("click", toggleMic);
+
+// --- Aria's eyes: camera + snapshots -----------------------------------------
+
+let camStream = null;
+
+async function toggleEyes() {
+  if (camStream) {
+    camStream.getTracks().forEach((t) => t.stop());
+    camStream = null;
+    camVideo.srcObject = null;
+    camVideo.hidden = true;
+    camBtn.textContent = "Open Aria's eyes";
+    camBtn.classList.remove("listening");
+    lookBtn.disabled = true;
+    return;
+  }
+
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 1280 } },
+      audio: false,
+    });
+    camVideo.srcObject = camStream;
+    camVideo.hidden = false;
+    await camVideo.play();
+    camBtn.textContent = "Close eyes";
+    camBtn.classList.add("listening");
+    lookBtn.disabled = false;
+  } catch (err) {
+    addMessage("system", "Camera access was denied — Aria can't see you.");
+    console.error(err);
+  }
+}
+
+// Grab the current frame as base64 JPEG, downscaled so requests stay small.
+function captureFrame() {
+  if (!camStream || !camVideo.videoWidth) return null;
+  const w = camVideo.videoWidth;
+  const h = camVideo.videoHeight;
+  const scale = Math.min(1, 1024 / Math.max(w, h));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(w * scale);
+  canvas.height = Math.round(h * scale);
+  canvas.getContext("2d").drawImage(camVideo, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+  return { media_type: "image/jpeg", data: dataUrl.split(",")[1] };
+}
+
+camBtn.addEventListener("click", toggleEyes);
+
+lookBtn.addEventListener("click", () => {
+  askCoach(
+    "Take a look at me — what do you see? Anything about my posture or setup I should fix before I sing?",
+  );
+});
+
+// --- Aria's voice: speak replies aloud ---------------------------------------
+
+function speakReply(text) {
+  if (!speakToggle.checked || !("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1.02;
+  utterance.pitch = 1.05;
+  // Prefer a natural-sounding English voice when one is available.
+  const voice = speechSynthesis
+    .getVoices()
+    .find((v) => /en[-_]/.test(v.lang) && /female|samantha|karen|serena/i.test(v.name));
+  if (voice) utterance.voice = voice;
+  speechSynthesis.speak(utterance);
+}
+
+// --- Talk to Aria: speech recognition ----------------------------------------
+
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let recognizing = false;
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.lang = navigator.language || "en-US";
+  recognition.interimResults = true;
+  recognition.continuous = false;
+
+  recognition.onresult = (event) => {
+    let transcript = "";
+    let isFinal = false;
+    for (const result of event.results) {
+      transcript += result[0].transcript;
+      if (result.isFinal) isFinal = true;
+    }
+    chatInput.value = transcript;
+    if (isFinal && transcript.trim()) {
+      chatInput.value = "";
+      askCoach(transcript.trim());
+    }
+  };
+
+  recognition.onend = () => {
+    recognizing = false;
+    voiceBtn.classList.remove("recording");
+    voiceBtn.textContent = "🎙";
+  };
+
+  recognition.onerror = (event) => {
+    if (event.error === "not-allowed") {
+      addMessage("system", "Microphone access for speech was denied.");
+    }
+  };
+
+  voiceBtn.addEventListener("click", () => {
+    if (recognizing) {
+      recognition.stop();
+      return;
+    }
+    // Don't let Aria's own voice get transcribed back at her.
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    recognition.start();
+    recognizing = true;
+    voiceBtn.classList.add("recording");
+    voiceBtn.textContent = "◼";
+    chatInput.placeholder = "Listening… speak to Aria";
+  });
+} else {
+  voiceBtn.hidden = true;
+}
 
 // --- Pitch-match exercise ----------------------------------------------------
 
@@ -178,6 +341,17 @@ async function askCoach(userText, context) {
   addMessage("user", userText);
   history.push({ role: "user", content: userText });
 
+  // Fold in whatever her ears just picked up alongside any exercise data.
+  const heard = hearingSummary();
+  const fullContext = [context, heard].filter(Boolean).join("\n") || undefined;
+
+  // If her eyes are open, she sees you as you speak.
+  const image = captureFrame() ?? undefined;
+  if (image) {
+    const last = history[history.length - 1];
+    last.content += "\n[I had my camera on, so you could see me when I sent this.]";
+  }
+
   const coachDiv = addMessage("coach", "…");
   let full = "";
 
@@ -185,7 +359,7 @@ async function askCoach(userText, context) {
     const res = await fetch("/api/coach", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: history, context }),
+      body: JSON.stringify({ messages: history, context: fullContext, image }),
     });
 
     if (!res.ok || !res.body) {
@@ -219,7 +393,10 @@ async function askCoach(userText, context) {
       }
     }
 
-    if (full) history.push({ role: "assistant", content: full });
+    if (full) {
+      history.push({ role: "assistant", content: full });
+      speakReply(full);
+    }
   } catch (err) {
     coachDiv.textContent = "⚠️ Couldn't reach the coach. Is the server running?";
     console.error(err);

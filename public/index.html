@@ -48,6 +48,21 @@
         </div>
       </section>
 
+      <!-- Aria's eyes -->
+      <section class="panel eyes-panel">
+        <h2>Aria's eyes</h2>
+        <p class="hint">
+          Open the camera and Aria can actually see you — posture, jaw, mouth
+          shape, tension. When her eyes are open, every message you send includes
+          what she sees.
+        </p>
+        <video id="camVideo" class="cam" autoplay playsinline muted hidden></video>
+        <div class="exercise-controls">
+          <button id="camBtn">Open Aria's eyes</button>
+          <button id="lookBtn" disabled>What do you see?</button>
+        </div>
+      </section>
+
       <!-- Pitch-match exercise -->
       <section class="panel exercise-panel">
         <h2>Match the note</h2>
@@ -65,8 +80,10 @@
         <h2>Talk to Aria</h2>
         <div id="chat" class="chat">
           <div class="msg coach">
-            Hi! I'm Aria. Press <strong>Start listening</strong>, then try the
-            "Match the note" exercise or just ask me anything about singing.
+            Hi! I'm Aria — and now I have eyes and ears. Press
+            <strong>Start listening</strong> so I can hear you, open my
+            <strong>eyes</strong> so I can see you, or tap the mic and just talk
+            to me.
           </div>
         </div>
         <form id="chatForm" class="chat-form">
@@ -76,8 +93,13 @@
             placeholder="Ask about breathing, warmups, range…"
             autocomplete="off"
           />
+          <button type="button" id="voiceBtn" class="voice-btn" title="Talk to Aria">🎙</button>
           <button type="submit" class="primary">Send</button>
         </form>
+        <label class="speak-toggle">
+          <input type="checkbox" id="speakToggle" />
+          Aria speaks her replies aloud
+        </label>
       </section>
     </main>
 

@@ -1,28 +1,36 @@
 # 🎤 Aria — AI Vocal Trainer & Coach
 
-An AI vocal coach that **listens to you sing**. Aria detects your pitch in real
-time right in the browser, runs pitch-matching exercises, and gives you warm,
-specific feedback powered by Claude.
+An AI vocal coach with **eyes and ears**. Aria detects your pitch in real time
+right in the browser, sees you through your camera, listens as you talk to her,
+and gives you warm, specific feedback powered by Claude.
 
 - 🎯 **Live tuner** — sing a note and see exactly which note it is and whether
   you're sharp or flat, down to the cent.
+- 👁 **Aria's eyes** — open your camera and Aria genuinely sees you (via Claude
+  vision): posture, jaw tension, mouth shape. Ask her "what do you see?"
+- 👂 **Aria's ears** — she hears what you just sang (a rolling 10-second pitch
+  memory rides along with every message), and you can tap the mic and *talk* to
+  her — your speech is transcribed live.
+- 🗣 **Aria's voice** — flip a toggle and she speaks her replies aloud.
 - 🎵 **Match-the-note exercises** — Aria plays a target note; you sing it back
   and she scores your accuracy and steadiness.
 - 💬 **Coaching chat** — ask Aria anything about breathing, warmups, range, or
   technique, and get feedback tailored to how you just performed.
 
-Your audio **never leaves your device** — all pitch detection happens locally in
-the browser. Only short performance summaries (numbers like "12 cents sharp") are
-sent to the coach.
+Your raw audio **never leaves your device** — pitch detection and speech
+transcription happen locally in the browser; only the resulting numbers and text
+are sent to the coach. Camera snapshots are only sent while you keep her eyes
+open, and only attached to the message you're currently sending.
 
 ## How it works
 
 ```
-Browser (mic → pitch detection)  ──▶  Aria's feedback appears in chat
-        │                                        ▲
-        │  performance summary + your questions  │
+Browser (mic → pitch detection, speech-to-text;
+         camera → snapshot)          ──▶  Aria's feedback appears in chat
+        │                                        ▲        (or is spoken aloud)
+        │  pitch summary + snapshot + questions  │
         ▼                                        │
-   Node server  ──────────────────▶  Claude API (the coaching "agent")
+   Node server  ──────────────────▶  Claude API (vision + the coaching "agent")
    (keeps your API key safe)
 ```
 

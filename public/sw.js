@@ -1,6 +1,6 @@
 // Service worker: caches the app shell so Aria opens instantly and works like
 // a native app. The coach API is always fetched live (never cached).
-const CACHE = "aria-v1";
+const CACHE = "aria-v2";
 const SHELL = [
   "/",
   "/index.html",
